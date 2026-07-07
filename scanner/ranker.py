@@ -20,7 +20,8 @@ class Ranker:
                 accumulation_score=item.accumulation_score,
                 compression_percent=item.compression_percent,
                 compression_score=item.compression_score,
-                position=item.position_in_range,
+                bottom_stability_percent=item.bottom_stability_percent,
+                bottom_stability_score=item.bottom_stability_score,
                 days_near_bottom=item.days_near_bottom,
                 vol_dryup=item.volume_dryup_percent,
             )

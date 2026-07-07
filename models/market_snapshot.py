@@ -22,14 +22,15 @@ class MarketSnapshot:
     crash_score: float = 0.0
     accumulation_score: float = 0.0
     compression_score: float = 0.0
+    bottom_stability_score: float = 0.0
     range_score: float = 0.0
-    distance_score: float = 0.0
     sleeping_score: float = 0.0
     is_qualified: bool = False
     high_90d: float = 0.0
     crash_percent: float = 0.0
     high_30d: float = 0.0
     compression_percent: float = 0.0
+    bottom_stability_percent: float = 0.0
     position_in_range: float = 0.0
     days_near_bottom: int = 0
     bottom_zone_percent: float = 5.0
