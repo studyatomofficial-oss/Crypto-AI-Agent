@@ -4,6 +4,7 @@ from scanner.analyzer import SnapshotAnalyzer
 from scanner.crash import CrashAnalyzer
 from scanner.accumulation import AccumulationAnalyzer
 from scanner.accumulation_filter import AccumulationFilter
+from scanner.sleeping import SleepingAnalyzer
 from scanner.ranker import Ranker
 from scanner.cache import MarketCache
 from reports.console_report import ConsoleReport
@@ -20,6 +21,7 @@ class Scanner:
         self.crash = CrashAnalyzer()
         self.accumulation = AccumulationAnalyzer()
         self.accumulation_filter = AccumulationFilter()
+        self.sleeping = SleepingAnalyzer()
         self.ranker = Ranker()
 
     def run(self) -> None:
@@ -36,6 +38,7 @@ class Scanner:
                 self.crash.analyze(snapshot, candles_90)
                 candles_30 = self.market.get_candles(coin["symbol"], settings.LOOKBACK_DAYS)
                 self.accumulation.analyze(snapshot, candles_30)
+                self.sleeping.analyze(snapshot, candles_30)
                 print("=" * 70)
                 print(snapshot.symbol)
                 print(f"90D High        : {snapshot.high_90d}")
@@ -44,6 +47,10 @@ class Scanner:
                 print(f"30D Low         : {snapshot.low_30d}")
                 print(f"30D Range       : {snapshot.range_30d_percent:.2f}%")
                 print(f"Position        : {snapshot.position_in_range:.2f}%")
+                print(f"Days Near Bottom: {snapshot.days_near_bottom}")
+                print(f"Avg Daily Range : {snapshot.average_daily_range:.2f}%")
+                print(f"Volume Dry-up   : {snapshot.volume_dryup_percent:.1f}%")
+                print(f"Sleeping Score  : {snapshot.sleeping_score}")
                 snapshot = self.analyzer.analyze(snapshot)
                 if not self.accumulation_filter.is_valid(snapshot):
                     continue
