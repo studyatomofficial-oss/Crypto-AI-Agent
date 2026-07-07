@@ -11,6 +11,7 @@ from scanner.ranker import Ranker
 from scanner.cache import MarketCache
 from reports.console_report import ConsoleReport
 from reports.csv_report import CsvReport
+from utils.progress import ProgressBar
 from config import settings
 
 
@@ -36,8 +37,15 @@ class Scanner:
         print(f"Cached {self.cache.size} tickers.")
 
         symbols = self.universe_builder.build()
+
+        print()
+        print("🚀 Starting Sleeping Giants Scan...")
+        print(f"Eligible Contracts : {len(symbols)}")
+        print()
+
+        progress = ProgressBar(len(symbols))
         snapshots = []
-        for coin in symbols:
+        for index, coin in enumerate(symbols, start=1):
             try:
                 snapshot = self.collector.collect(coin["symbol"])
                 candles_90 = self.market.get_candles(coin["symbol"], settings.CRASH_LOOKBACK_DAYS)
@@ -51,9 +59,17 @@ class Scanner:
                 snapshots.append(snapshot)
             except Exception as e:
                 print(f"{coin['symbol']} -> {e}")
+            finally:
+                progress.update(index)
+
+        progress.finish()
 
         end_time = time.perf_counter()
         scan_duration = end_time - start_time
+
+        print()
+        print("✅ Scan Complete!")
+        print()
 
         ranked = self.ranker.rank(snapshots)
         ConsoleReport().show(ranked)
