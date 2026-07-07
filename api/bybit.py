@@ -1,8 +1,9 @@
 from api.client import HttpClient
+from config import settings
 
 
 class BybitClient:
-    BASE_URL = "https://api.bybit.com"
+    BASE_URL = settings.BYBIT_BASE_URL
 
     def __init__(self, api_key: str = "", api_secret: str = "") -> None:
         self.api_key = api_key
@@ -49,6 +50,16 @@ class BybitClient:
                 "symbol": symbol,
                 "interval": "D",
                 "limit": limit,
+            },
+        )
+
+    def get_open_interest(self, symbol: str):
+        return self.client.get(
+            "/v5/market/open-interest",
+            {
+                "category": "linear",
+                "symbol": symbol,
+                "intervalTime": "5min",
             },
         )
 

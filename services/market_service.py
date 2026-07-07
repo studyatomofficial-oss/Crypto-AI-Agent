@@ -1,5 +1,5 @@
 from api.bybit import BybitClient
-from config import MAX_LEVERAGE, MIN_LEVERAGE
+from config import settings
 from models.candle import Candle
 
 
@@ -19,7 +19,7 @@ class MarketService:
                 if coin["contractType"] != "LinearPerpetual":
                     continue
                 leverage = float(coin["leverageFilter"]["maxLeverage"])
-                if MIN_LEVERAGE <= leverage <= MAX_LEVERAGE:
+                if settings.MIN_LEVERAGE <= leverage <= settings.MAX_LEVERAGE:
                     symbols.append(coin)
             cursor = result.get("nextPageCursor")
             if not cursor:
@@ -27,7 +27,7 @@ class MarketService:
         return symbols
 
     def get_last_30_days(self, symbol: str) -> list[Candle]:
-        response = self.bybit.get_kline(symbol)
+        response = self.bybit.get_kline(symbol, limit=settings.LOOKBACK_DAYS)
         candle_items = response.get("result", {}).get("list", [])
         candles = []
         for item in candle_items:
@@ -35,6 +35,13 @@ class MarketService:
                 continue
             candles.append(Candle.from_api(item))
         return candles
+
+    def get_open_interest(self, symbol: str) -> float:
+        response = self.bybit.get_open_interest(symbol)
+        data = response.get("result", {}).get("list", [])
+        if not data:
+            return 0.0
+        return float(data[0]["openInterest"])
 
     def get_30_day_low(self, symbol: str) -> float:
         candles = self.get_last_30_days(symbol)

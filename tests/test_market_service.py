@@ -5,7 +5,7 @@ from models.candle import Candle
 def test_get_last_30_days_returns_candle_objects(monkeypatch) -> None:
     service = MarketService()
 
-    def fake_get_kline(symbol: str) -> dict:
+    def fake_get_kline(symbol: str, limit: int = 30) -> dict:
         return {
             "result": {
                 "list": [
@@ -40,7 +40,7 @@ def test_get_last_30_days_returns_candle_objects(monkeypatch) -> None:
 def test_get_last_30_days_returns_empty_list_when_payload_is_missing_candles(monkeypatch) -> None:
     service = MarketService()
 
-    def fake_get_kline(symbol: str) -> dict:
+    def fake_get_kline(symbol: str, limit: int = 30) -> dict:
         return {"result": {}}
 
     monkeypatch.setattr(service.bybit, "get_kline", fake_get_kline)

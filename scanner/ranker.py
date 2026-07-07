@@ -1,4 +1,4 @@
-from config import MAX_RESULTS
+from config import settings
 from models.opportunity import Opportunity
 
 
@@ -17,5 +17,5 @@ class Ranker:
                 open_interest=item.open_interest,
                 score=item.score,
             )
-            for item in ranked[:MAX_RESULTS]
+            for item in ranked[:settings.MAX_RESULTS]
         ]

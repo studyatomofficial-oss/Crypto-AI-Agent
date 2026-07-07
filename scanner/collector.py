@@ -23,7 +23,7 @@ class MarketCollector:
             volume_24h=float(ticker["volume24h"]),
             turnover_24h=float(ticker["turnover24h"]),
             funding_rate=float(ticker["fundingRate"]),
-            open_interest=float(ticker.get("openInterest", 0.0)),
+            open_interest=self.market.get_open_interest(symbol),
         )
         snapshot.candles = candles
         return snapshot
