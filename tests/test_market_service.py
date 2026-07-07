@@ -1,0 +1,37 @@
+from services.market_service import MarketService
+from models.candle import Candle
+
+
+def test_get_last_30_days_returns_candle_objects(monkeypatch) -> None:
+    service = MarketService()
+
+    def fake_get_kline(symbol: str) -> dict:
+        return {
+            "result": {
+                "list": [
+                    [
+                        "1783382400000",
+                        "0.00432",
+                        "0.00451",
+                        "0.00401",
+                        "0.00447",
+                        "123456",
+                        "98765",
+                    ]
+                ]
+            }
+        }
+
+    monkeypatch.setattr(service.bybit, "get_kline", fake_get_kline)
+
+    candles = service.get_last_30_days("AGIUSDT")
+
+    assert len(candles) == 1
+    assert isinstance(candles[0], Candle)
+    assert candles[0].timestamp == 1783382400000
+    assert candles[0].open == 0.00432
+    assert candles[0].high == 0.00451
+    assert candles[0].low == 0.00401
+    assert candles[0].close == 0.00447
+    assert candles[0].volume == 123456.0
+    assert candles[0].turnover == 98765.0

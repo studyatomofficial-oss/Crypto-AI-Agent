@@ -1,4 +1,5 @@
 from api.bybit import BybitClient
+from models.candle import Candle
 
 
 class MarketService:
@@ -24,17 +25,16 @@ class MarketService:
                 break
         return symbols
 
-    def get_last_30_days(self, symbol: str) -> list[dict]:
+    def get_last_30_days(self, symbol: str) -> list[Candle]:
         response = self.bybit.get_kline(symbol)
-        return response["result"]["list"]
+        candles = []
+        for item in response["result"]["list"]:
+            candles.append(Candle.from_api(item))
+        return candles
 
     def get_30_day_low(self, symbol: str) -> float:
         candles = self.get_last_30_days(symbol)
-        lows = []
-        for candle in candles:
-            low = float(candle[3])
-            lows.append(low)
-        return min(lows)
+        return min(candle.low for candle in candles)
 
     def get_all_tickers(self) -> list[dict]:
         response = self.bybit.get_all_tickers()
