@@ -16,6 +16,8 @@ class Ranker:
                 open_interest=item.open_interest,
                 score=item.sleeping_score,
                 crash_pct=item.crash_percent,
+                crash_score=item.crash_score,
+                accumulation_score=item.accumulation_score,
                 range_30d=item.range_30d_percent,
                 position=item.position_in_range,
                 days_near_bottom=item.days_near_bottom,

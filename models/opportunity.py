@@ -12,6 +12,8 @@ class Opportunity:
     open_interest: float
     score: float
     crash_pct: float = 0.0
+    crash_score: float = 0.0
+    accumulation_score: float = 0.0
     range_30d: float = 0.0
     position: float = 0.0
     days_near_bottom: int = 0
