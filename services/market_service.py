@@ -27,8 +27,11 @@ class MarketService:
 
     def get_last_30_days(self, symbol: str) -> list[Candle]:
         response = self.bybit.get_kline(symbol)
+        candle_items = response.get("result", {}).get("list", [])
         candles = []
-        for item in response["result"]["list"]:
+        for item in candle_items:
+            if not isinstance(item, list):
+                continue
             candles.append(Candle.from_api(item))
         return candles
 

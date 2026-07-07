@@ -6,4 +6,4 @@ class SnapshotAnalyzer:
         self.analyzer = MarketAnalyzer()
 
     def analyze(self, snapshot):
-        return self.analyzer.calculate_distance(snapshot)
+        return self.analyzer.analyze(snapshot, snapshot.candles)

@@ -1,4 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
+from models.candle import Candle
 
 
 @dataclass(slots=True)
@@ -12,4 +14,10 @@ class MarketSnapshot:
     funding_rate: float = 0.0
     open_interest: float = 0.0
     max_leverage: float = 0.0
+    rsi: float = 0.0
+    ema20: float = 0.0
+    ema50: float = 0.0
+    atr: float = 0.0
+    macd: float = 0.0
     score: float = 0.0
+    candles: list[Candle] = field(default_factory=list)

@@ -35,3 +35,16 @@ def test_get_last_30_days_returns_candle_objects(monkeypatch) -> None:
     assert candles[0].close == 0.00447
     assert candles[0].volume == 123456.0
     assert candles[0].turnover == 98765.0
+
+
+def test_get_last_30_days_returns_empty_list_when_payload_is_missing_candles(monkeypatch) -> None:
+    service = MarketService()
+
+    def fake_get_kline(symbol: str) -> dict:
+        return {"result": {}}
+
+    monkeypatch.setattr(service.bybit, "get_kline", fake_get_kline)
+
+    candles = service.get_last_30_days("AGIUSDT")
+
+    assert candles == []
