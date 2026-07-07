@@ -23,4 +23,7 @@ class MarketSnapshot:
     is_qualified: bool = False
     high_90d: float = 0.0
     crash_percent: float = 0.0
+    high_30d: float = 0.0
+    range_30d_percent: float = 0.0
+    position_in_range: float = 0.0
     candles: list[Candle] = field(default_factory=list)

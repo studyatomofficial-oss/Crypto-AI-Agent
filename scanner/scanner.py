@@ -2,6 +2,7 @@ from scanner.universe import UniverseBuilder
 from scanner.collector import MarketCollector
 from scanner.analyzer import SnapshotAnalyzer
 from scanner.crash import CrashAnalyzer
+from scanner.accumulation import AccumulationAnalyzer
 from scanner.ranker import Ranker
 from scanner.cache import MarketCache
 from reports.console_report import ConsoleReport
@@ -16,6 +17,7 @@ class Scanner:
         self.collector = MarketCollector(self.market, self.cache)
         self.analyzer = SnapshotAnalyzer()
         self.crash = CrashAnalyzer()
+        self.accumulation = AccumulationAnalyzer()
         self.ranker = Ranker()
 
     def run(self) -> None:
@@ -30,11 +32,16 @@ class Scanner:
                 snapshot = self.collector.collect(coin["symbol"])
                 candles_90 = self.market.get_candles(coin["symbol"], settings.LOOKBACK_90D)
                 self.crash.analyze(snapshot, candles_90)
-                print("=" * 60)
+                candles_30 = self.market.get_candles(coin["symbol"], settings.LOOKBACK_DAYS)
+                self.accumulation.analyze(snapshot, candles_30)
+                print("=" * 70)
                 print(snapshot.symbol)
-                print(f"Current  : {snapshot.current_price}")
-                print(f"90D High : {snapshot.high_90d}")
-                print(f"Crash    : {snapshot.crash_percent:.2f}%")
+                print(f"90D High        : {snapshot.high_90d}")
+                print(f"Crash           : {snapshot.crash_percent:.2f}%")
+                print(f"30D High        : {snapshot.high_30d}")
+                print(f"30D Low         : {snapshot.low_30d}")
+                print(f"30D Range       : {snapshot.range_30d_percent:.2f}%")
+                print(f"Position        : {snapshot.position_in_range:.2f}%")
                 snapshot = self.analyzer.analyze(snapshot)
                 if not snapshot.is_qualified:
                     continue
