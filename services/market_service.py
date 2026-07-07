@@ -1,4 +1,5 @@
 from api.bybit import BybitClient
+from config import MAX_LEVERAGE, MIN_LEVERAGE
 from models.candle import Candle
 
 
@@ -18,7 +19,7 @@ class MarketService:
                 if coin["contractType"] != "LinearPerpetual":
                     continue
                 leverage = float(coin["leverageFilter"]["maxLeverage"])
-                if 4 <= leverage <= 10:
+                if MIN_LEVERAGE <= leverage <= MAX_LEVERAGE:
                     symbols.append(coin)
             cursor = result.get("nextPageCursor")
             if not cursor:

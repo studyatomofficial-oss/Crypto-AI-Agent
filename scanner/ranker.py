@@ -1,9 +1,11 @@
+from config import MAX_RESULTS
 from models.opportunity import Opportunity
 
 
 class Ranker:
     def rank(self, snapshots):
-        ranked = sorted(snapshots, key=lambda item: item.score, reverse=True)
+        qualified = [item for item in snapshots if getattr(item, "is_qualified", False)]
+        ranked = sorted(qualified, key=lambda item: item.score, reverse=True)
         return [
             Opportunity(
                 symbol=item.symbol,
@@ -15,5 +17,5 @@ class Ranker:
                 open_interest=item.open_interest,
                 score=item.score,
             )
-            for item in ranked
+            for item in ranked[:MAX_RESULTS]
         ]
