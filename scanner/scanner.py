@@ -9,7 +9,7 @@ from scanner.scorer import SleepingScorer
 from scanner.ranker import Ranker
 from scanner.cache import MarketCache
 from reports.console_report import ConsoleReport
-from reports.csv_exporter import CSVExporter
+from reports.csv_report import CsvReport
 from config import settings
 
 
@@ -26,6 +26,7 @@ class Scanner:
         self.sleeping = SleepingAnalyzer()
         self.scorer = SleepingScorer()
         self.ranker = Ranker()
+        self.csv_report = CsvReport()
 
     def run(self) -> None:
         tickers = self.universe_builder.market.get_all_tickers()
@@ -51,7 +52,4 @@ class Scanner:
 
         ranked = self.ranker.rank(snapshots)
         ConsoleReport().show(ranked)
-        
-        # Export to CSV
-        csv_file = CSVExporter.export(ranked)
-        print(f"✓ Results exported to {csv_file}")
+        self.csv_report.save(ranked)
