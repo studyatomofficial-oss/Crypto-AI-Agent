@@ -9,6 +9,7 @@ from scanner.scorer import SleepingScorer
 from scanner.ranker import Ranker
 from scanner.cache import MarketCache
 from reports.console_report import ConsoleReport
+from reports.csv_exporter import CSVExporter
 from config import settings
 
 
@@ -50,3 +51,7 @@ class Scanner:
 
         ranked = self.ranker.rank(snapshots)
         ConsoleReport().show(ranked)
+        
+        # Export to CSV
+        csv_file = CSVExporter.export(ranked)
+        print(f"✓ Results exported to {csv_file}")
