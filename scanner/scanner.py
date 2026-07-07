@@ -1,4 +1,5 @@
 from scanner.universe import UniverseBuilder
+from scanner.recovery import RecoveryAnalyzer
 from scanner.collector import MarketCollector
 from scanner.analyzer import SnapshotAnalyzer
 from scanner.crash import CrashAnalyzer
@@ -19,6 +20,7 @@ class Scanner:
         self.collector = MarketCollector(self.market, self.cache)
         self.analyzer = SnapshotAnalyzer()
         self.crash = CrashAnalyzer()
+        self.recovery = RecoveryAnalyzer()
         self.accumulation = AccumulationAnalyzer()
         self.sleeping = SleepingAnalyzer()
         self.scorer = SleepingScorer()
@@ -36,6 +38,7 @@ class Scanner:
                 snapshot = self.collector.collect(coin["symbol"])
                 candles_90 = self.market.get_candles(coin["symbol"], settings.CRASH_LOOKBACK_DAYS)
                 self.crash.analyze(snapshot, candles_90)
+                self.recovery.analyze(snapshot)
                 self.sleeping.calculate_accumulation_days(snapshot, candles_90)
                 candles_30 = self.market.get_candles(coin["symbol"], settings.ACCUMULATION_LOOKBACK_DAYS)
                 self.accumulation.analyze(snapshot, candles_30)

@@ -23,6 +23,8 @@ class Ranker:
                 compression_score=item.compression_score,
                 bottom_stability_percent=item.bottom_stability_percent,
                 bottom_stability_score=item.bottom_stability_score,
+                recovery_percent=item.recovery_percent,
+                recovery_score=item.recovery_score,
                 vol_dryup=item.volume_dryup_percent,
             )
             for item in ranked[:settings.TOP_RESULTS]

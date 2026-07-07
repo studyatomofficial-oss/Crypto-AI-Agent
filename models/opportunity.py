@@ -19,4 +19,6 @@ class Opportunity:
     compression_score: float = 0.0
     bottom_stability_percent: float = 0.0
     bottom_stability_score: float = 0.0
+    recovery_percent: float = 0.0
+    recovery_score: float = 0.0
     vol_dryup: float = 0.0

@@ -24,6 +24,8 @@ class MarketSnapshot:
     accumulation_days: int = 0
     compression_score: float = 0.0
     bottom_stability_score: float = 0.0
+    recovery_percent: float = 0.0
+    recovery_score: float = 0.0
     range_score: float = 0.0
     sleeping_score: float = 0.0
     is_qualified: bool = False

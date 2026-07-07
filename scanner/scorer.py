@@ -72,6 +72,22 @@ class SleepingScorer:
             return 20
         return 0
 
+    @staticmethod
+    def _recovery_score(value: float) -> float:
+        if value <= 5:
+            return 100
+        if value <= 10:
+            return 90
+        if value <= 15:
+            return 80
+        if value <= 20:
+            return 70
+        if value <= 30:
+            return 50
+        if value <= 40:
+            return 30
+        return 0
+
     def score(self, snapshot: MarketSnapshot) -> None:
         snapshot.crash_score = self._crash_score(snapshot.crash_percent)
         snapshot.accumulation_score = self._accumulation_score(
@@ -83,9 +99,13 @@ class SleepingScorer:
         snapshot.bottom_stability_score = self._bottom_stability_score(
             snapshot.bottom_stability_percent
         )
+        snapshot.recovery_score = self._recovery_score(
+            snapshot.recovery_percent
+        )
         snapshot.sleeping_score = (
             snapshot.crash_score
             + snapshot.accumulation_score
             + snapshot.compression_score
             + snapshot.bottom_stability_score
+            + snapshot.recovery_score
         )
