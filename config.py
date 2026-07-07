@@ -21,14 +21,9 @@ class Settings:
     # Scanner
     LOOKBACK_DAYS: int = 30
     LOOKBACK_90D: int = 90
-    MAX_DISTANCE_FROM_LOW: float = 5.0
-
-    # Crash
-    MIN_CRASH_PERCENT: float = 70.0
-
-    # Accumulation
-    MAX_30D_RANGE_PERCENT: float = 25.0
-    MAX_POSITION_IN_RANGE: float = 30.0
+    CRASH_LOOKBACK_DAYS: int = 90
+    ACCUMULATION_LOOKBACK_DAYS: int = 30
+    BOTTOM_ZONE_PERCENT: float = 5.0
 
     # Liquidity
     MIN_VOLUME_24H: float = 5_000_000
@@ -36,6 +31,7 @@ class Settings:
 
     # Output
     MAX_RESULTS: int = 20
+    TOP_RESULTS: int = 25
 
 
 settings = Settings()

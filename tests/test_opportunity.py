@@ -12,9 +12,8 @@ def test_ranker_emits_opportunity_objects() -> None:
         volume_24h=10_000_000.0,
         funding_rate=0.0001,
         open_interest=2_000_000.0,
-        score=9.5,
     )
-    snapshot.is_qualified = True
+    snapshot.sleeping_score = 9.5
 
     opportunities = Ranker().rank([snapshot])
 

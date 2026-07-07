@@ -4,8 +4,7 @@ from models.opportunity import Opportunity
 
 class Ranker:
     def rank(self, snapshots):
-        qualified = [item for item in snapshots if getattr(item, "is_qualified", False)]
-        ranked = sorted(qualified, key=lambda item: item.score, reverse=True)
+        ranked = sorted(snapshots, key=lambda item: item.sleeping_score, reverse=True)
         return [
             Opportunity(
                 symbol=item.symbol,
@@ -15,7 +14,13 @@ class Ranker:
                 volume_24h=item.volume_24h,
                 funding_rate=item.funding_rate,
                 open_interest=item.open_interest,
-                score=item.score,
+                score=item.sleeping_score,
+                crash_pct=item.crash_percent,
+                range_30d=item.range_30d_percent,
+                position=item.position_in_range,
+                days_near_bottom=item.days_near_bottom,
+                adr=item.average_daily_range,
+                vol_dryup=item.volume_dryup_percent,
             )
-            for item in ranked[:settings.MAX_RESULTS]
+            for item in ranked[:settings.TOP_RESULTS]
         ]
