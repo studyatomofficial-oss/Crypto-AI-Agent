@@ -13,7 +13,9 @@ from reports.console_report import ConsoleReport
 from reports.csv_report import CsvReport
 from reports.change_detector import ChangeDetector
 from utils.progress import ProgressBar
+from utils.logger import get_logger
 from config import settings
+import strategy
 
 
 class Scanner:
@@ -31,8 +33,19 @@ class Scanner:
         self.ranker = Ranker()
         self.csv_report = CsvReport()
         self.change_detector = ChangeDetector()
+        self.logger = get_logger(__name__)
 
     def run(self) -> None:
+        print()
+        print("=" * 60)
+        print(f"{strategy.STRATEGY_NAME}")
+        print(f"Version     : {strategy.VERSION}")
+        print(f"Strategy    : {strategy.STRATEGY_DESCRIPTION}")
+        print(f"Exchange    : {strategy.EXCHANGE}")
+        print(f"Universe    : {strategy.UNIVERSE}")
+        print("=" * 60)
+        print()
+
         start_time = time.perf_counter()
         tickers = self.universe_builder.market.get_all_tickers()
         self.cache.load(tickers)
@@ -47,20 +60,35 @@ class Scanner:
 
         progress = ProgressBar(len(symbols))
         snapshots = []
+        failed_symbols = []
         for index, coin in enumerate(symbols, start=1):
             try:
                 snapshot = self.collector.collect(coin["symbol"])
+                
+                if snapshot.current_price <= 0:
+                    raise ValueError("Invalid current price")
+                
                 candles_90 = self.market.get_candles(coin["symbol"], settings.CRASH_LOOKBACK_DAYS)
                 self.crash.analyze(snapshot, candles_90)
+                
+                if snapshot.high_90d <= 0:
+                    raise ValueError("Invalid 90d high")
+                
                 self.recovery.analyze(snapshot)
                 self.sleeping.calculate_accumulation_days(snapshot, candles_90)
                 candles_30 = self.market.get_candles(coin["symbol"], settings.ACCUMULATION_LOOKBACK_DAYS)
                 self.accumulation.analyze(snapshot, candles_30)
                 self.sleeping.analyze(snapshot, candles_30)
+                
+                if snapshot.low_30d <= 0:
+                    raise ValueError("Invalid 30d low")
+                
                 self.scorer.score(snapshot)
                 snapshots.append(snapshot)
             except Exception as e:
-                print(f"{coin['symbol']} -> {e}")
+                error_msg = str(e)
+                failed_symbols.append((coin["symbol"], error_msg))
+                self.logger.info(f"{coin['symbol']}: {error_msg}")
             finally:
                 progress.update(index)
 
@@ -94,6 +122,15 @@ class Scanner:
         print(f"Latest CSV             : output/{csv_files['latest']}")
         print(f"History CSV            : output/history/{csv_files['history']}")
         print("=" * 55)
+
+        if failed_symbols:
+            print()
+            print("=" * 60)
+            print("FAILED SYMBOLS")
+            print("=" * 60)
+            for symbol, error in failed_symbols:
+                print(f"{symbol:<20} {error}")
+            print("=" * 60)
 
         changes = self.change_detector.compare()
         if changes:

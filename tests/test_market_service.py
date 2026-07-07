@@ -45,6 +45,8 @@ def test_get_candles_returns_empty_list_when_payload_is_missing_candles(monkeypa
 
     monkeypatch.setattr(service.bybit, "get_kline", fake_get_kline)
 
-    candles = service.get_candles("AGIUSDT")
-
-    assert candles == []
+    try:
+        candles = service.get_candles("AGIUSDT")
+        assert False, "Expected ValueError for missing candle data"
+    except ValueError as e:
+        assert "No candle data" in str(e)

@@ -7,17 +7,20 @@ class ChangeDetector:
     def compare(self):
         """Compare last two history files and return detected changes."""
 
-        history = sorted(
-            Path("output/history").glob("*.csv")
-        )
+        try:
+            history = sorted(
+                Path("output/history").glob("*.csv")
+            )
 
-        if len(history) < 2:
+            if len(history) < 2:
+                return None
+
+            previous = pd.read_csv(history[-2])
+            current = pd.read_csv(history[-1])
+
+            return self.detect(previous, current)
+        except Exception:
             return None
-
-        previous = pd.read_csv(history[-2])
-        current = pd.read_csv(history[-1])
-
-        return self.detect(previous, current)
 
     def detect(self, previous, current):
         """Detect changes between previous and current scans."""

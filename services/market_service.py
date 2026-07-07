@@ -34,6 +34,10 @@ class MarketService:
             if not isinstance(item, list):
                 continue
             candles.append(Candle.from_api(item))
+        
+        if not candles:
+            raise ValueError(f"No candle data for {symbol}")
+        
         return candles
 
     def get_open_interest(self, symbol: str) -> float:

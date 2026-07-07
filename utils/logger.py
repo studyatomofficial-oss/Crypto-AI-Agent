@@ -7,7 +7,10 @@ def get_logger(name: str) -> logging.Logger:
     logger.setLevel(logging.INFO)
 
     if not logger.handlers:
-        handler = logging.FileHandler(Path("output/logs/app.log"))
+        log_dir = Path("output/logs")
+        log_dir.mkdir(parents=True, exist_ok=True)
+        
+        handler = logging.FileHandler(log_dir / "app.log")
         handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
         logger.addHandler(handler)
 
