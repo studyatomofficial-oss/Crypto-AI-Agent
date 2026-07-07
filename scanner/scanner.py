@@ -11,6 +11,7 @@ from scanner.ranker import Ranker
 from scanner.cache import MarketCache
 from reports.console_report import ConsoleReport
 from reports.csv_report import CsvReport
+from reports.change_detector import ChangeDetector
 from utils.progress import ProgressBar
 from config import settings
 
@@ -29,6 +30,7 @@ class Scanner:
         self.scorer = SleepingScorer()
         self.ranker = Ranker()
         self.csv_report = CsvReport()
+        self.change_detector = ChangeDetector()
 
     def run(self) -> None:
         start_time = time.perf_counter()
@@ -92,3 +94,7 @@ class Scanner:
         print(f"Latest CSV             : output/{csv_files['latest']}")
         print(f"History CSV            : output/history/{csv_files['history']}")
         print("=" * 55)
+
+        changes = self.change_detector.compare()
+        if changes:
+            self.change_detector.report(changes)
