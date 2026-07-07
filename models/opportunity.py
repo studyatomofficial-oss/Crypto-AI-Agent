@@ -22,3 +22,4 @@ class Opportunity:
     recovery_percent: float = 0.0
     recovery_score: float = 0.0
     vol_dryup: float = 0.0
+    reason: str = ""

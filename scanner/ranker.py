@@ -3,6 +3,17 @@ from models.opportunity import Opportunity
 
 
 class Ranker:
+    @staticmethod
+    def _generate_reason(snapshot) -> str:
+        """Generate human-readable reason for ranking."""
+        parts = [
+            f"{snapshot.crash_percent:.0f}% crash",
+            f"{snapshot.accumulation_days} bottom days",
+            f"{snapshot.compression_percent:.0f}% range",
+            f"{snapshot.recovery_percent:.1f}% recovery"
+        ]
+        return " • ".join(parts)
+
     def rank(self, snapshots):
         ranked = sorted(snapshots, key=lambda item: item.sleeping_score, reverse=True)
         return [
@@ -26,6 +37,7 @@ class Ranker:
                 recovery_percent=item.recovery_percent,
                 recovery_score=item.recovery_score,
                 vol_dryup=item.volume_dryup_percent,
+                reason=self._generate_reason(item),
             )
             for item in ranked[:settings.TOP_RESULTS]
         ]

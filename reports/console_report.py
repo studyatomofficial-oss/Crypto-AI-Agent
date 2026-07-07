@@ -1,28 +1,22 @@
 class ConsoleReport:
     def show(self, results) -> None:
         print()
-        print("=" * 110)
-        print("CRYPTO OPPORTUNITY SCANNER  —  Sleeping Coins")
-        print("=" * 110)
+        print("=" * 100)
+        print("SLEEPING GIANTS SCANNER")
+        print("=" * 100)
         print()
         print(
             f"{'Rank':<6}"
-            f"{'Symbol':<18}"
-            f"{'Crash%':<10}"
-            f"{'Consecutive Bot Days':<22}"
-            f"{'Compr%':<10}"
-            f"{'Recovery%':<12}"
-            f"{'Score':<10}"
+            f"{'Symbol':<14}"
+            f"{'Score':<8}"
+            f"{'Reason':<65}"
         )
-        print("-" * 110)
+        print("-" * 100)
         for i, item in enumerate(results, start=1):
             print(
                 f"{i:<6}"
-                f"{item.symbol:<18}"
-                f"{item.crash_pct:>7.1f}%  "
-                f"{item.accumulation_days:>18}     "
-                f"{item.compression_percent:>7.1f}%  "
-                f"{item.recovery_percent:>9.1f}%  "
-                f"{item.score:>8.1f}"
+                f"{item.symbol:<14}"
+                f"{item.score:>6.1f}  "
+                f"{item.reason:<65}"
             )
         print()
