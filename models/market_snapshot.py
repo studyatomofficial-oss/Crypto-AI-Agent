@@ -21,4 +21,6 @@ class MarketSnapshot:
     macd: float = 0.0
     score: float = 0.0
     is_qualified: bool = False
+    high_90d: float = 0.0
+    crash_percent: float = 0.0
     candles: list[Candle] = field(default_factory=list)
