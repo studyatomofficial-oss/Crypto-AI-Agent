@@ -18,11 +18,11 @@ class Ranker:
                 crash_pct=item.crash_percent,
                 crash_score=item.crash_score,
                 accumulation_score=item.accumulation_score,
+                accumulation_days=item.accumulation_days,
                 compression_percent=item.compression_percent,
                 compression_score=item.compression_score,
                 bottom_stability_percent=item.bottom_stability_percent,
                 bottom_stability_score=item.bottom_stability_score,
-                days_near_bottom=item.days_near_bottom,
                 vol_dryup=item.volume_dryup_percent,
             )
             for item in ranked[:settings.TOP_RESULTS]

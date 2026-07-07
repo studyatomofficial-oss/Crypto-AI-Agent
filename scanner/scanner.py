@@ -36,6 +36,7 @@ class Scanner:
                 snapshot = self.collector.collect(coin["symbol"])
                 candles_90 = self.market.get_candles(coin["symbol"], settings.CRASH_LOOKBACK_DAYS)
                 self.crash.analyze(snapshot, candles_90)
+                self.sleeping.calculate_accumulation_days(snapshot, candles_90)
                 candles_30 = self.market.get_candles(coin["symbol"], settings.ACCUMULATION_LOOKBACK_DAYS)
                 self.accumulation.analyze(snapshot, candles_30)
                 self.sleeping.analyze(snapshot, candles_30)

@@ -21,6 +21,7 @@ class MarketSnapshot:
     macd: float = 0.0
     crash_score: float = 0.0
     accumulation_score: float = 0.0
+    accumulation_days: int = 0
     compression_score: float = 0.0
     bottom_stability_score: float = 0.0
     range_score: float = 0.0

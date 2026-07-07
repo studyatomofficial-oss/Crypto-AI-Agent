@@ -14,9 +14,9 @@ class Opportunity:
     crash_pct: float = 0.0
     crash_score: float = 0.0
     accumulation_score: float = 0.0
+    accumulation_days: int = 0
     compression_percent: float = 0.0
     compression_score: float = 0.0
     bottom_stability_percent: float = 0.0
     bottom_stability_score: float = 0.0
-    days_near_bottom: int = 0
     vol_dryup: float = 0.0
