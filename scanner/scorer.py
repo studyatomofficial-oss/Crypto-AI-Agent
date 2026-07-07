@@ -42,11 +42,34 @@ class SleepingScorer:
             return 10
         return 0
 
+    @staticmethod
+    def _compression_score(compression: float) -> float:
+        if compression <= 5:
+            return 100
+        if compression <= 10:
+            return 90
+        if compression <= 15:
+            return 80
+        if compression <= 20:
+            return 70
+        if compression <= 30:
+            return 60
+        if compression <= 40:
+            return 40
+        if compression <= 60:
+            return 20
+        return 0
+
     def score(self, snapshot: MarketSnapshot) -> None:
         snapshot.crash_score = self._crash_score(snapshot.crash_percent)
         snapshot.accumulation_score = self._accumulation_score(
             snapshot.days_near_bottom
         )
+        snapshot.compression_score = self._compression_score(
+            snapshot.compression_percent
+        )
         snapshot.sleeping_score = (
-            snapshot.crash_score + snapshot.accumulation_score
+            snapshot.crash_score
+            + snapshot.accumulation_score
+            + snapshot.compression_score
         )
