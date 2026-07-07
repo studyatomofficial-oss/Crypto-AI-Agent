@@ -18,4 +18,7 @@ class MarketCollector:
             symbol=symbol,
             current_price=current_price,
             low_30d=self.market.get_30_day_low(symbol),
+            volume_24h=float(ticker["volume24h"]),
+            turnover_24h=float(ticker["turnover24h"]),
+            funding_rate=float(ticker["fundingRate"]),
         )

@@ -8,6 +8,7 @@ class MarketSnapshot:
     low_30d: float
     distance: float = 0.0
     volume_24h: float = 0.0
+    turnover_24h: float = 0.0
     funding_rate: float = 0.0
     open_interest: float = 0.0
     max_leverage: float = 0.0

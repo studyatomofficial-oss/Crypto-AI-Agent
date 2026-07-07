@@ -34,4 +34,12 @@ class Scanner:
             snapshots.append(snapshot)
 
         ranked = self.ranker.rank(snapshots)
-        self.reporter.report(ranked[:10])
+        for snapshot in ranked[:10]:
+            print("=" * 60)
+            print(f"Symbol        : {snapshot.symbol}")
+            print(f"Current Price : {snapshot.current_price}")
+            print(f"30D Low       : {snapshot.low_30d}")
+            print(f"Distance      : {snapshot.distance:.2f}%")
+            print(f"24H Volume    : {snapshot.volume_24h}")
+            print(f"24H Turnover  : {snapshot.turnover_24h}")
+            print(f"Funding Rate  : {snapshot.funding_rate}")
