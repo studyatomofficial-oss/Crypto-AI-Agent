@@ -99,6 +99,9 @@ Crypto-AI-Agent/
 ├── strategy.py            # Frozen strategy constants (v1.0.0)
 ├── main.py                # Entry point
 ├── requirements.txt
+├── Install.bat            # First-time setup (Windows)
+├── Run Scanner.bat        # Daily scan launcher (Windows)
+├── Open Output Folder.bat # Shortcut to output directory
 └── README.md
 ```
 
@@ -145,6 +148,32 @@ To get your Telegram credentials:
 ---
 
 ## Run
+
+### Windows (Double-click)
+
+**First time setup:**
+
+```
+Double-click: Install.bat
+```
+
+This creates the virtual environment and installs all dependencies.
+
+**Every day:**
+
+```
+Double-click: Run Scanner.bat
+```
+
+No terminal. No VS Code. No Python knowledge required.
+
+**Open results:**
+
+```
+Double-click: Open Output Folder.bat
+```
+
+### Command Line
 
 ```bash
 python main.py
