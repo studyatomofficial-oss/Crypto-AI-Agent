@@ -1,16 +1,21 @@
 from services.market_service import MarketService
+from scanner.cache import MarketCache
 from models.market_snapshot import MarketSnapshot
 
 
 class MarketCollector:
-    def __init__(self) -> None:
-        self.market = MarketService()
+    def __init__(self, market: MarketService, cache: MarketCache) -> None:
+        self.market = market
+        self.cache = cache
 
     def collect(self, symbol: str) -> MarketSnapshot:
-        data = self.market.get_market_snapshot(symbol)
+        ticker = self.cache.get(symbol)
+        if ticker is None:
+            raise ValueError(f"{symbol} not found in MarketCache")
+
+        current_price = float(ticker["lastPrice"])
         return MarketSnapshot(
-            symbol=data["symbol"],
-            current_price=data["current_price"],
-            low_30d=data["low_30d"],
-            distance=data["distance"],
+            symbol=symbol,
+            current_price=current_price,
+            low_30d=self.market.get_30_day_low(symbol),
         )

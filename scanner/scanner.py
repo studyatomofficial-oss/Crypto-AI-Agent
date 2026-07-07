@@ -8,12 +8,13 @@ from scanner.cache import MarketCache
 
 class Scanner:
     def __init__(self) -> None:
+        self.market = UniverseBuilder().market
+        self.cache = MarketCache()
         self.universe_builder = UniverseBuilder()
-        self.collector = MarketCollector()
+        self.collector = MarketCollector(self.market, self.cache)
         self.analyzer = SnapshotAnalyzer()
         self.ranker = Ranker()
         self.reporter = Reporter()
-        self.cache = MarketCache()
 
     def run(self) -> None:
         tickers = self.universe_builder.market.get_all_tickers()
