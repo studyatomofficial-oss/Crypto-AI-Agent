@@ -62,5 +62,4 @@ class CsvReport:
 
         df.to_csv(filepath, index=False)
 
-        print()
-        print(f"✓ CSV saved -> {filepath}")
+        return filepath.name

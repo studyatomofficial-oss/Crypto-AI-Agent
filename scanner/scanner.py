@@ -1,3 +1,4 @@
+import time
 from scanner.universe import UniverseBuilder
 from scanner.recovery import RecoveryAnalyzer
 from scanner.collector import MarketCollector
@@ -29,6 +30,7 @@ class Scanner:
         self.csv_report = CsvReport()
 
     def run(self) -> None:
+        start_time = time.perf_counter()
         tickers = self.universe_builder.market.get_all_tickers()
         self.cache.load(tickers)
         print(f"Cached {self.cache.size} tickers.")
@@ -50,6 +52,33 @@ class Scanner:
             except Exception as e:
                 print(f"{coin['symbol']} -> {e}")
 
+        end_time = time.perf_counter()
+        scan_duration = end_time - start_time
+
         ranked = self.ranker.rank(snapshots)
         ConsoleReport().show(ranked)
-        self.csv_report.save(ranked)
+        csv_file = self.csv_report.save(ranked)
+
+        print()
+        print("=" * 60)
+        print("SCAN SUMMARY")
+        print("=" * 60)
+        print()
+        print(f"Eligible Universe      : {len(symbols)}")
+        print(f"Coins Scanned          : {len(snapshots)}")
+        print(f"Top Results            : {len(ranked)}")
+        print()
+
+        if ranked:
+            highest = max(r.score for r in ranked)
+            lowest = min(r.score for r in ranked)
+            average = sum(r.score for r in ranked) / len(ranked)
+
+            print(f"Highest Score          : {highest:.2f}")
+            print(f"Lowest Score           : {lowest:.2f}")
+            print(f"Average Score          : {average:.2f}")
+            print()
+
+        print(f"Scan Duration          : {scan_duration:.2f} sec")
+        print(f"CSV File               : {csv_file}")
+        print("=" * 60)
