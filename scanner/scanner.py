@@ -39,7 +39,7 @@ class Scanner:
         symbols = self.universe_builder.build()
 
         print()
-        print("🚀 Starting Sleeping Giants Scan...")
+        print(">> Starting Sleeping Giants Scan...")
         print(f"Eligible Contracts : {len(symbols)}")
         print()
 
@@ -68,33 +68,27 @@ class Scanner:
         scan_duration = end_time - start_time
 
         print()
-        print("✅ Scan Complete!")
+        print(">> Scan Complete!")
         print()
 
         ranked = self.ranker.rank(snapshots)
         ConsoleReport().show(ranked)
-        csv_file = self.csv_report.save(ranked)
+        csv_files = self.csv_report.save(ranked)
 
         print()
-        print("=" * 60)
+        print("=" * 55)
         print("SCAN SUMMARY")
-        print("=" * 60)
+        print("=" * 55)
         print()
-        print(f"Eligible Universe      : {len(symbols)}")
-        print(f"Coins Scanned          : {len(snapshots)}")
+        print(f"Universe               : {len(symbols)}")
         print(f"Top Results            : {len(ranked)}")
+        print(f"Strategy               : 1.0.0")
         print()
 
-        if ranked:
-            highest = max(r.score for r in ranked)
-            lowest = min(r.score for r in ranked)
-            average = sum(r.score for r in ranked) / len(ranked)
-
-            print(f"Highest Score          : {highest:.2f}")
-            print(f"Lowest Score           : {lowest:.2f}")
-            print(f"Average Score          : {average:.2f}")
-            print()
-
+        print(f"Scan ID                : {csv_files['scan_id']}")
         print(f"Scan Duration          : {scan_duration:.2f} sec")
-        print(f"CSV File               : {csv_file}")
-        print("=" * 60)
+        print()
+
+        print(f"Latest CSV             : output/{csv_files['latest']}")
+        print(f"History CSV            : output/history/{csv_files['history']}")
+        print("=" * 55)

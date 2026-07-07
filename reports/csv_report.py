@@ -8,22 +8,30 @@ class CsvReport:
     def save(self, opportunities):
         
         output_dir = Path("output")
+        history_dir = output_dir / "history"
         output_dir.mkdir(exist_ok=True)
+        history_dir.mkdir(exist_ok=True)
 
+        scan_id = datetime.now().strftime("%Y%m%d_%H%M%S")
         scan_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        filename = (
+        
+        latest_file = output_dir / "latest.csv"
+        
+        history_filename = (
             "sleeping_giants_"
             + datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             + ".csv"
         )
-
-        filepath = output_dir / filename
+        
+        history_file = history_dir / history_filename
 
         rows = []
 
         for rank, coin in enumerate(opportunities, start=1):
 
             rows.append({
+
+                "Scan ID": scan_id,
 
                 "Rank": rank,
 
@@ -56,10 +64,18 @@ class CsvReport:
 
                 "Scan Time": scan_time,
 
+                "Strategy Version": "1.0.0",
+
             })
 
         df = pd.DataFrame(rows)
 
-        df.to_csv(filepath, index=False)
+        df.to_csv(latest_file, index=False)
 
-        return filepath.name
+        df.to_csv(history_file, index=False)
+
+        return {
+            "scan_id": scan_id,
+            "latest": latest_file.name,
+            "history": history_file.name,
+        }
