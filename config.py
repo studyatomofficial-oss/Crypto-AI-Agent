@@ -33,5 +33,22 @@ class Settings:
     MAX_RESULTS: int = 20
     TOP_RESULTS: int = 25
 
+    # Telegram
+    ENABLE_TELEGRAM: bool = (
+        os.getenv(
+            "ENABLE_TELEGRAM",
+            "False",
+        ).lower()
+        == "true"
+    )
+    TELEGRAM_BOT_TOKEN: str = os.getenv(
+        "TELEGRAM_BOT_TOKEN",
+        "",
+    )
+    TELEGRAM_CHAT_ID: str = os.getenv(
+        "TELEGRAM_CHAT_ID",
+        "",
+    )
+
 
 settings = Settings()

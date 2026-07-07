@@ -14,6 +14,7 @@ from reports.csv_report import CsvReport
 from reports.change_detector import ChangeDetector
 from utils.progress import ProgressBar
 from utils.logger import get_logger
+from notifications.telegram import TelegramNotifier
 from config import settings
 import strategy
 
@@ -34,6 +35,14 @@ class Scanner:
         self.csv_report = CsvReport()
         self.change_detector = ChangeDetector()
         self.logger = get_logger(__name__)
+
+        if settings.ENABLE_TELEGRAM:
+            self.telegram = TelegramNotifier(
+                settings.TELEGRAM_BOT_TOKEN,
+                settings.TELEGRAM_CHAT_ID,
+            )
+        else:
+            self.telegram = None
 
     def run(self) -> None:
         print()
@@ -105,6 +114,9 @@ class Scanner:
         ConsoleReport().show(ranked)
         csv_files = self.csv_report.save(ranked)
 
+        highest = max((r.score for r in ranked), default=0.0)
+        lowest = min((r.score for r in ranked), default=0.0)
+
         print()
         print("=" * 55)
         print("SCAN SUMMARY")
@@ -122,6 +134,25 @@ class Scanner:
         print(f"Latest CSV             : output/{csv_files['latest']}")
         print(f"History CSV            : output/history/{csv_files['history']}")
         print("=" * 55)
+
+        if self.telegram and ranked:
+            message = (
+                f"Sleeping Giants Scanner\n"
+                f"Strategy  : v1.0.0\n"
+                f"Universe  : 3x-10x Leverage\n"
+                f"Top Results : {len(ranked)}\n"
+                f"Highest Score : {highest:.2f}\n"
+                f"Lowest Score  : {lowest:.2f}\n"
+                f"Scan Time : {scan_duration:.2f} sec"
+            )
+            try:
+                self.telegram.notify(
+                    message,
+                    "output/latest.csv",
+                )
+                print("Telegram notification sent.")
+            except Exception as e:
+                self.logger.info(f"Telegram Error: {e}")
 
         if failed_symbols:
             print()
