@@ -1,4 +1,4 @@
 class ConsoleReporter:
-    def report(self, snapshots) -> None:
-        for snapshot in snapshots:
-            print(snapshot)
+    def report(self, opportunities) -> None:
+        for opportunity in opportunities:
+            print(opportunity)

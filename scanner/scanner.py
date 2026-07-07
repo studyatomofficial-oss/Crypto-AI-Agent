@@ -34,12 +34,11 @@ class Scanner:
             snapshots.append(snapshot)
 
         ranked = self.ranker.rank(snapshots)
-        for snapshot in ranked[:10]:
+        for opportunity in ranked[:10]:
             print("=" * 60)
-            print(f"Symbol        : {snapshot.symbol}")
-            print(f"Current Price : {snapshot.current_price}")
-            print(f"30D Low       : {snapshot.low_30d}")
-            print(f"Distance      : {snapshot.distance:.2f}%")
-            print(f"24H Volume    : {snapshot.volume_24h}")
-            print(f"24H Turnover  : {snapshot.turnover_24h}")
-            print(f"Funding Rate  : {snapshot.funding_rate}")
+            print(f"Symbol        : {opportunity.symbol}")
+            print(f"Current Price : {opportunity.current_price}")
+            print(f"30D Low       : {opportunity.low_30d}")
+            print(f"Distance      : {opportunity.distance_pct:.2f}%")
+            print(f"24H Volume    : {opportunity.volume_24h}")
+            print(f"Funding Rate  : {opportunity.funding_rate}")

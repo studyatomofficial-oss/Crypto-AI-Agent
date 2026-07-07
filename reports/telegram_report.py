@@ -1,4 +1,4 @@
 class TelegramReporter:
-    def report(self, snapshots) -> None:
-        for snapshot in snapshots:
-            print(f"Telegram: {snapshot.symbol} -> {snapshot.score}")
+    def report(self, opportunities) -> None:
+        for opportunity in opportunities:
+            print(f"Telegram: {opportunity.symbol} -> {opportunity.score}")
