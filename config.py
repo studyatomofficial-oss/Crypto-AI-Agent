@@ -23,6 +23,13 @@ class Settings:
     LOOKBACK_90D: int = 90
     MAX_DISTANCE_FROM_LOW: float = 5.0
 
+    # Crash
+    MIN_CRASH_PERCENT: float = 70.0
+
+    # Accumulation
+    MAX_30D_RANGE_PERCENT: float = 25.0
+    MAX_POSITION_IN_RANGE: float = 30.0
+
     # Liquidity
     MIN_VOLUME_24H: float = 5_000_000
     MIN_OPEN_INTEREST: float = 1_000_000

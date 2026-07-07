@@ -3,6 +3,7 @@ from scanner.collector import MarketCollector
 from scanner.analyzer import SnapshotAnalyzer
 from scanner.crash import CrashAnalyzer
 from scanner.accumulation import AccumulationAnalyzer
+from scanner.accumulation_filter import AccumulationFilter
 from scanner.ranker import Ranker
 from scanner.cache import MarketCache
 from reports.console_report import ConsoleReport
@@ -18,6 +19,7 @@ class Scanner:
         self.analyzer = SnapshotAnalyzer()
         self.crash = CrashAnalyzer()
         self.accumulation = AccumulationAnalyzer()
+        self.accumulation_filter = AccumulationFilter()
         self.ranker = Ranker()
 
     def run(self) -> None:
@@ -43,6 +45,8 @@ class Scanner:
                 print(f"30D Range       : {snapshot.range_30d_percent:.2f}%")
                 print(f"Position        : {snapshot.position_in_range:.2f}%")
                 snapshot = self.analyzer.analyze(snapshot)
+                if not self.accumulation_filter.is_valid(snapshot):
+                    continue
                 if not snapshot.is_qualified:
                     continue
                 snapshots.append(snapshot)
