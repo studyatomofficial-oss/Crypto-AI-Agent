@@ -20,6 +20,7 @@ class Settings:
 
     # Scanner
     LOOKBACK_DAYS: int = 30
+    LOOKBACK_90D: int = 90
     MAX_DISTANCE_FROM_LOW: float = 5.0
 
     # Liquidity

@@ -14,7 +14,7 @@ class MarketCollector:
             raise ValueError(f"{symbol} not found in MarketCache")
 
         current_price = float(ticker["lastPrice"])
-        candles = self.market.get_last_30_days(symbol)
+        candles = self.market.get_candles(symbol)
         low_30d = min((candle.low for candle in candles), default=0.0)
         snapshot = MarketSnapshot(
             symbol=symbol,

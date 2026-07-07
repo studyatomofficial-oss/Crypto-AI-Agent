@@ -2,7 +2,7 @@ from services.market_service import MarketService
 from models.candle import Candle
 
 
-def test_get_last_30_days_returns_candle_objects(monkeypatch) -> None:
+def test_get_candles_returns_candle_objects(monkeypatch) -> None:
     service = MarketService()
 
     def fake_get_kline(symbol: str, limit: int = 30) -> dict:
@@ -24,7 +24,7 @@ def test_get_last_30_days_returns_candle_objects(monkeypatch) -> None:
 
     monkeypatch.setattr(service.bybit, "get_kline", fake_get_kline)
 
-    candles = service.get_last_30_days("AGIUSDT")
+    candles = service.get_candles("AGIUSDT")
 
     assert len(candles) == 1
     assert isinstance(candles[0], Candle)
@@ -37,7 +37,7 @@ def test_get_last_30_days_returns_candle_objects(monkeypatch) -> None:
     assert candles[0].turnover == 98765.0
 
 
-def test_get_last_30_days_returns_empty_list_when_payload_is_missing_candles(monkeypatch) -> None:
+def test_get_candles_returns_empty_list_when_payload_is_missing_candles(monkeypatch) -> None:
     service = MarketService()
 
     def fake_get_kline(symbol: str, limit: int = 30) -> dict:
@@ -45,6 +45,6 @@ def test_get_last_30_days_returns_empty_list_when_payload_is_missing_candles(mon
 
     monkeypatch.setattr(service.bybit, "get_kline", fake_get_kline)
 
-    candles = service.get_last_30_days("AGIUSDT")
+    candles = service.get_candles("AGIUSDT")
 
     assert candles == []

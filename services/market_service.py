@@ -26,8 +26,8 @@ class MarketService:
                 break
         return symbols
 
-    def get_last_30_days(self, symbol: str) -> list[Candle]:
-        response = self.bybit.get_kline(symbol, limit=settings.LOOKBACK_DAYS)
+    def get_candles(self, symbol: str, days: int = settings.LOOKBACK_DAYS) -> list[Candle]:
+        response = self.bybit.get_kline(symbol=symbol, limit=days)
         candle_items = response.get("result", {}).get("list", [])
         candles = []
         for item in candle_items:
@@ -44,7 +44,7 @@ class MarketService:
         return float(data[0]["openInterest"])
 
     def get_30_day_low(self, symbol: str) -> float:
-        candles = self.get_last_30_days(symbol)
+        candles = self.get_candles(symbol)
         return min(candle.low for candle in candles)
 
     def get_all_tickers(self) -> list[dict]:

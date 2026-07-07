@@ -42,7 +42,7 @@ class BybitClient:
             params,
         )
 
-    def get_kline(self, symbol: str, limit: int = 30):
+    def get_kline(self, symbol: str, limit: int):
         return self.client.get(
             "/v5/market/kline",
             {
