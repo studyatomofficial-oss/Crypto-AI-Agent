@@ -28,6 +28,9 @@ class MarketSnapshot:
     recovery_score: float = 0.0
     range_score: float = 0.0
     sleeping_score: float = 0.0
+    funding_score: float = 0.0
+    psychology_score: float = 0.0
+    final_score: float = 0.0
     is_qualified: bool = False
     high_90d: float = 0.0
     crash_percent: float = 0.0

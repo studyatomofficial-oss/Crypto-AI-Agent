@@ -15,7 +15,7 @@ class Ranker:
         return " • ".join(parts)
 
     def rank(self, snapshots):
-        ranked = sorted(snapshots, key=lambda item: item.sleeping_score, reverse=True)
+        ranked = sorted(snapshots, key=lambda item: item.final_score, reverse=True)
         return [
             Opportunity(
                 symbol=item.symbol,
@@ -25,6 +25,9 @@ class Ranker:
                 volume_24h=item.volume_24h,
                 funding_rate=item.funding_rate,
                 open_interest=item.open_interest,
+                funding_score=item.funding_score,
+                psychology_score=item.psychology_score,
+                final_score=item.final_score,
                 score=item.sleeping_score,
                 crash_pct=item.crash_percent,
                 crash_score=item.crash_score,

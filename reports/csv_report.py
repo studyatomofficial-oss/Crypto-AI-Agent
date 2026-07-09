@@ -38,6 +38,9 @@ class CsvReport:
                 "Symbol": coin.symbol,
 
                 "Sleeping Score": round(coin.score, 2),
+                "Funding Score": round(coin.funding_score, 2),
+                "Psychology Score": round(coin.psychology_score, 2),
+                "Final Score": round(coin.final_score, 2),
 
                 "Crash %": round(coin.crash_pct, 2),
 

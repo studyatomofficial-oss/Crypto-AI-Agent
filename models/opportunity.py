@@ -10,6 +10,9 @@ class Opportunity:
     volume_24h: float
     funding_rate: float
     open_interest: float
+    funding_score: float
+    psychology_score: float
+    final_score: float
     score: float
     crash_pct: float = 0.0
     crash_score: float = 0.0

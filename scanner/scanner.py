@@ -7,6 +7,7 @@ from scanner.crash import CrashAnalyzer
 from scanner.accumulation import AccumulationAnalyzer
 from scanner.sleeping import SleepingAnalyzer
 from scanner.scorer import SleepingScorer
+from scanner.psychology_scorer import PsychologyScorer
 from scanner.ranker import Ranker
 from scanner.cache import MarketCache
 from reports.console_report import ConsoleReport
@@ -31,6 +32,7 @@ class Scanner:
         self.accumulation = AccumulationAnalyzer()
         self.sleeping = SleepingAnalyzer()
         self.scorer = SleepingScorer()
+        self.psychology = PsychologyScorer()
         self.ranker = Ranker()
         self.csv_report = CsvReport()
         self.change_detector = ChangeDetector()
@@ -93,6 +95,11 @@ class Scanner:
                     raise ValueError("Invalid 30d low")
                 
                 self.scorer.score(snapshot)
+                snapshot = self.psychology.score(snapshot)
+                snapshot.final_score = (
+                    snapshot.sleeping_score
+                    + snapshot.psychology_score
+                )
                 snapshots.append(snapshot)
             except Exception as e:
                 error_msg = str(e)
