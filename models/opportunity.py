@@ -10,6 +10,8 @@ class Opportunity:
     volume_24h: float
     funding_rate: float
     open_interest: float
+    oi_change_30d: float
+    oi_score: float
     funding_score: float
     psychology_score: float
     final_score: float

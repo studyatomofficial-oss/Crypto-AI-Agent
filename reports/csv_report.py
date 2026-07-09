@@ -39,6 +39,8 @@ class CsvReport:
 
                 "Sleeping Score": round(coin.score, 2),
                 "Funding Score": round(coin.funding_score, 2),
+                "OI Change 30D": round(coin.oi_change_30d, 2),
+                "OI Score": round(coin.oi_score, 2),
                 "Psychology Score": round(coin.psychology_score, 2),
                 "Final Score": round(coin.final_score, 2),
 

@@ -15,7 +15,25 @@ class PsychologyScorer:
 
     def score(self, snapshot):
         snapshot = self.score_funding(snapshot)
+        snapshot = self.score_open_interest(snapshot)
 
-        snapshot.psychology_score = snapshot.funding_score
+        snapshot.psychology_score = (
+            snapshot.funding_score
+            + snapshot.oi_score
+        )
+
+        return snapshot
+
+    def score_open_interest(self, snapshot):
+        change = snapshot.oi_change_30d
+
+        if change <= -20:
+            snapshot.oi_score = 10
+        elif change <= -5:
+            snapshot.oi_score = 8
+        elif change <= 10:
+            snapshot.oi_score = 5
+        else:
+            snapshot.oi_score = 0
 
         return snapshot

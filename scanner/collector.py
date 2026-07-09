@@ -24,6 +24,8 @@ class MarketCollector:
             turnover_24h=float(ticker["turnover24h"]),
             funding_rate=float(ticker["fundingRate"]),
             open_interest=self.market.get_open_interest(symbol),
+            # Placeholder until historical OI collection is added.
+            oi_change_30d=0.0,
         )
         snapshot.candles = candles
         return snapshot

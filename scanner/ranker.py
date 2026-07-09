@@ -25,6 +25,8 @@ class Ranker:
                 volume_24h=item.volume_24h,
                 funding_rate=item.funding_rate,
                 open_interest=item.open_interest,
+                oi_change_30d=item.oi_change_30d,
+                oi_score=item.oi_score,
                 funding_score=item.funding_score,
                 psychology_score=item.psychology_score,
                 final_score=item.final_score,
