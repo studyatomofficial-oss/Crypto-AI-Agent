@@ -15,6 +15,12 @@ class MarketCollector:
         self.cache = cache
         self.oi_history = oi_history
 
+    @staticmethod
+    def _percent_vs_average(current_value: float, average_value: float | None) -> float:
+        if average_value is None or average_value <= 0:
+            return 0.0
+        return ((current_value - average_value) / average_value) * 100.0
+
     def collect(self, symbol: str) -> MarketSnapshot:
         ticker = self.cache.get(symbol)
         if ticker is None:
@@ -28,6 +34,8 @@ class MarketCollector:
             symbol,
             current_open_interest,
         )
+        oi_avg_7d = self.oi_history.get_average_open_interest(symbol, days_back=7)
+        oi_avg_30d = self.oi_history.get_average_open_interest(symbol, days_back=30)
         self.oi_history.upsert_daily(symbol, current_open_interest)
         snapshot = MarketSnapshot(
             symbol=symbol,
@@ -38,6 +46,10 @@ class MarketCollector:
             funding_rate=float(ticker["fundingRate"]),
             open_interest=current_open_interest,
             oi_change_30d=oi_change_30d,
+            oi_avg_7d=oi_avg_7d or 0.0,
+            oi_avg_30d=oi_avg_30d or 0.0,
+            oi_vs_7d_avg=self._percent_vs_average(current_open_interest, oi_avg_7d),
+            oi_vs_30d_avg=self._percent_vs_average(current_open_interest, oi_avg_30d),
         )
         snapshot.candles = candles
         return snapshot

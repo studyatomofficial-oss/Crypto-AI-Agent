@@ -31,6 +31,10 @@ class MarketSnapshot:
     funding_score: float = 0.0
     oi_score: float = 0.0
     oi_change_30d: float = 0.0
+    oi_avg_7d: float = 0.0
+    oi_avg_30d: float = 0.0
+    oi_vs_7d_avg: float = 0.0
+    oi_vs_30d_avg: float = 0.0
     crowd_score: float = 0.0
     base_score: float = 0.0
     false_break_score: float = 0.0

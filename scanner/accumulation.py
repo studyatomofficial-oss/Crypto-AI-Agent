@@ -8,8 +8,11 @@ class AccumulationAnalyzer:
             return
         high = max(c.high for c in candles)
         low = min(c.low for c in candles)
+        midpoint = (high + low) / 2 if high > 0 and low > 0 else 0.0
         snapshot.high_30d = high
-        snapshot.compression_percent = ((high - low) / low) * 100
+        snapshot.compression_percent = (
+            ((high - low) / midpoint) * 100 if midpoint > 0 else 0.0
+        )
         snapshot.position_in_range = (
             ((snapshot.current_price - low) / (high - low)) * 100
             if high != low

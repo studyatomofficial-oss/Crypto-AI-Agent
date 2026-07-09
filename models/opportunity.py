@@ -11,6 +11,10 @@ class Opportunity:
     funding_rate: float
     open_interest: float
     oi_change_30d: float
+    oi_avg_7d: float
+    oi_avg_30d: float
+    oi_vs_7d_avg: float
+    oi_vs_30d_avg: float
     oi_score: float
     funding_score: float
     crowd_score: float

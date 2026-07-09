@@ -33,14 +33,26 @@ class PsychologyScorer:
         return snapshot
 
     def score_open_interest(self, snapshot):
-        change = snapshot.oi_change_30d
+        changes = []
+        if snapshot.oi_avg_7d > 0:
+            changes.append(snapshot.oi_vs_7d_avg)
+        if snapshot.oi_avg_30d > 0:
+            changes.append(snapshot.oi_vs_30d_avg)
 
-        if change <= -20:
+        if not changes:
+            snapshot.oi_score = 0
+            return snapshot
+
+        change = sum(changes) / len(changes)
+
+        if change <= -25:
             snapshot.oi_score = 10
-        elif change <= -5:
-            snapshot.oi_score = 8
-        elif change <= 10:
+        elif change <= -15:
+            snapshot.oi_score = 7
+        elif change <= -8:
             snapshot.oi_score = 5
+        elif change <= -3:
+            snapshot.oi_score = 3
         else:
             snapshot.oi_score = 0
 
@@ -97,19 +109,30 @@ class PsychologyScorer:
             snapshot.false_break_detected = True
 
             reclaim_delay = None
+            reclaim_close = None
             for j in range(index, len(lookback)):
                 if lookback[j].close > previous_30d_low:
                     reclaim_delay = j - index
+                    reclaim_close = lookback[j].close
                     break
 
             if reclaim_delay is None:
                 snapshot.false_break_score = 0
-            elif reclaim_delay <= 2:
-                snapshot.false_break_score = 10
-            elif reclaim_delay <= 5:
-                snapshot.false_break_score = 7
             else:
-                snapshot.false_break_score = 3
+                break_depth = ((previous_30d_low - candle.low) / previous_30d_low) * 100
+                reclaim_strength = max(
+                    0.0,
+                    ((reclaim_close - previous_30d_low) / previous_30d_low) * 100,
+                )
+
+                if reclaim_delay <= 1 and reclaim_strength >= 1.0 and break_depth <= 3.0:
+                    snapshot.false_break_score = 10
+                elif reclaim_delay <= 3 and reclaim_strength >= 0.5 and break_depth <= 5.0:
+                    snapshot.false_break_score = 7
+                elif reclaim_delay <= 5 and break_depth <= 8.0:
+                    snapshot.false_break_score = 5
+                else:
+                    snapshot.false_break_score = 3
             break
 
         return snapshot

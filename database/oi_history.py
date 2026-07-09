@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 
 class OIHistoryRepository:
@@ -30,7 +30,7 @@ class OIHistoryRepository:
 
     def upsert_daily(self, symbol: str, open_interest: float, as_of_date: date | None = None) -> None:
         snapshot_day = as_of_date or date.today()
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(UTC).isoformat()
         self.conn.execute(
             """
             INSERT INTO oi_history(symbol, snapshot_date, open_interest, created_at, updated_at)
@@ -59,6 +59,29 @@ class OIHistoryRepository:
             (symbol, target_day.isoformat()),
         ).fetchone()
         if row is None:
+            return None
+        return float(row[0])
+
+    def get_average_open_interest(
+        self,
+        symbol: str,
+        days_back: int,
+        as_of_date: date | None = None,
+    ) -> float | None:
+        snapshot_day = as_of_date or date.today()
+        start_day = snapshot_day - timedelta(days=days_back)
+        end_day = snapshot_day - timedelta(days=1)
+        row = self.conn.execute(
+            """
+            SELECT AVG(open_interest)
+            FROM oi_history
+            WHERE symbol = ?
+              AND snapshot_date > ?
+              AND snapshot_date <= ?
+            """,
+            (symbol, start_day.isoformat(), end_day.isoformat()),
+        ).fetchone()
+        if row is None or row[0] is None:
             return None
         return float(row[0])
 
