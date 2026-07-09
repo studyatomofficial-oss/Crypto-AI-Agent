@@ -17,11 +17,13 @@ class PsychologyScorer:
         snapshot = self.score_funding(snapshot)
         snapshot = self.score_open_interest(snapshot)
         snapshot = self.score_crowd(snapshot)
+        snapshot = self.score_base(snapshot)
 
         snapshot.psychology_score = (
             snapshot.funding_score
             + snapshot.oi_score
             + snapshot.crowd_score
+            + snapshot.base_score
         )
 
         return snapshot
@@ -53,6 +55,22 @@ class PsychologyScorer:
             snapshot.crowd_score = 2
         else:
             snapshot.crowd_score = 0
+
+        return snapshot
+
+    def score_base(self, snapshot):
+        adr = snapshot.avg_daily_range
+
+        if adr <= 3:
+            snapshot.base_score = 10
+        elif adr <= 5:
+            snapshot.base_score = 8
+        elif adr <= 8:
+            snapshot.base_score = 5
+        elif adr <= 12:
+            snapshot.base_score = 2
+        else:
+            snapshot.base_score = 0
 
         return snapshot
 

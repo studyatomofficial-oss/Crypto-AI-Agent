@@ -32,6 +32,7 @@ class MarketSnapshot:
     oi_score: float = 0.0
     oi_change_30d: float = 0.0
     crowd_score: float = 0.0
+    base_score: float = 0.0
     psychology_score: float = 0.0
     final_score: float = 0.0
     is_qualified: bool = False
