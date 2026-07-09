@@ -20,9 +20,26 @@ The scanner analyzes every eligible 3x–10x leverage perpetual contract, scores
 - CSV Export with Scan ID and Strategy Version
 - Historical Scan Archive (`output/history/`)
 - Watchlist Change Detection (new entries, rank movers, removed)
+- Rolling Psychology Summary (overlap, movers, average contributions)
+- Rolling Summary CSV Log (`output/rolling_summary.csv`)
 - Telegram Notifications with CSV attachment
 - Automatic API Retry and Error Handling
 - Failure Logging to `output/logs/app.log`
+
+## Psychology Engine
+
+The scanner now evaluates market psychology in addition to price structure.
+
+It scores every coin using:
+
+- Funding Psychology
+- Open Interest Psychology
+- Crowd Abandonment
+- Stable Base Detection
+- False Breakdown Detection
+- Recovery Failure Analysis
+
+These metrics are combined into a Psychology Score, which is added to the Sleeping Score to produce the Final Score used for ranking.
 
 ---
 
@@ -55,23 +72,26 @@ The goal is to enter **before** broad market participation begins.
 ## Architecture
 
 ```
-               Bybit Public API
-                      │
-                      ▼
-             Market Data Collector
-                      │
-                      ▼
-             Sleeping Giant Scanner
-                      │
-      ┌───────────────┼────────────────┐
-      ▼               ▼                ▼
- Ranking Engine   CSV Export     History Engine
-      │               │                │
-      └───────────────┼────────────────┘
-                      ▼
-              Telegram Notification
-                      ▼
-                 Mobile Device
+Bybit API
+   │
+   ▼
+Market Collector
+   │
+   ▼
+Sleeping Analysis
+   │
+   ▼
+Psychology Engine
+   │
+   ▼
+Final Ranking Engine
+   │
+   ▼
+Top 25
+   │
+ ┌────┼───────────┐
+ ▼    ▼           ▼
+CSV Telegram History
 ```
 
 ---
@@ -172,6 +192,17 @@ No terminal. No VS Code. No Python knowledge required.
 ```
 Double-click: Open Output Folder.bat
 ```
+
+**Generate rolling charts:**
+
+```
+Double-click: Plot Rolling Summary.bat
+```
+
+This generates:
+
+- `output/rolling_overlap_trend.png`
+- `output/rolling_contribution_trends.png`
 
 ### Command Line
 

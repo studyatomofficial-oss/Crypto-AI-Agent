@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
+import strategy
 
 
 class CsvReport:
@@ -43,6 +44,8 @@ class CsvReport:
                 "OI Score": round(coin.oi_score, 2),
                 "Crowd Score": round(coin.crowd_score, 2),
                 "Base Score": round(coin.base_score, 2),
+                "False Break Score": round(coin.false_break_score, 2),
+                "Recovery Failure Score": round(coin.recovery_failure_score, 2),
                 "Psychology Score": round(coin.psychology_score, 2),
                 "Final Score": round(coin.final_score, 2),
 
@@ -71,7 +74,7 @@ class CsvReport:
 
                 "Scan Time": scan_time,
 
-                "Strategy Version": "1.0.0",
+                "Strategy Version": strategy.VERSION,
 
             })
 

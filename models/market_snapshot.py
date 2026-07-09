@@ -33,6 +33,9 @@ class MarketSnapshot:
     oi_change_30d: float = 0.0
     crowd_score: float = 0.0
     base_score: float = 0.0
+    false_break_score: float = 0.0
+    false_break_detected: bool = False
+    recovery_failure_score: float = 0.0
     psychology_score: float = 0.0
     final_score: float = 0.0
     is_qualified: bool = False

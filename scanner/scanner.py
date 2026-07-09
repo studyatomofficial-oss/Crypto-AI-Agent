@@ -13,6 +13,7 @@ from scanner.cache import MarketCache
 from reports.console_report import ConsoleReport
 from reports.csv_report import CsvReport
 from reports.change_detector import ChangeDetector
+from reports.rolling_report import RollingReport
 from utils.progress import ProgressBar
 from utils.logger import get_logger
 from notifications.telegram import TelegramNotifier
@@ -40,6 +41,7 @@ class Scanner:
         self.ranker = Ranker()
         self.csv_report = CsvReport()
         self.change_detector = ChangeDetector()
+        self.rolling_report = RollingReport()
         self.logger = get_logger(__name__)
 
         if settings.ENABLE_TELEGRAM:
@@ -124,6 +126,10 @@ class Scanner:
         ranked = self.ranker.rank(snapshots)
         ConsoleReport().show(ranked)
         csv_files = self.csv_report.save(ranked)
+        rolling = self.rolling_report.summarize()
+        if rolling:
+            self.rolling_report.report(rolling)
+            self.rolling_report.save_log(rolling)
 
         highest = max((r.score for r in ranked), default=0.0)
         lowest = min((r.score for r in ranked), default=0.0)
@@ -135,7 +141,7 @@ class Scanner:
         print()
         print(f"Universe               : {len(symbols)}")
         print(f"Top Results            : {len(ranked)}")
-        print(f"Strategy               : 1.0.0")
+        print(f"Strategy               : {strategy.VERSION}")
         print()
 
         print(f"Scan ID                : {csv_files['scan_id']}")
@@ -149,7 +155,7 @@ class Scanner:
         if self.telegram and ranked:
             message = (
                 f"Sleeping Giants Scanner\n"
-                f"Strategy  : v1.0.0\n"
+                f"Strategy  : v{strategy.VERSION}\n"
                 f"Universe  : 3x-10x Leverage\n"
                 f"Top Results : {len(ranked)}\n"
                 f"Highest Score : {highest:.2f}\n"

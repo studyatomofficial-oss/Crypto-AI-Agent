@@ -1,33 +1,36 @@
 @echo off
-title Sleeping Giants Scanner
+title Sleeping Giants Scanner v1.1
 
 cd /d "%~dp0"
 
+echo ======================================================
+echo        SLEEPING GIANTS SCANNER v1.1
+echo ======================================================
+echo.
+
 if not exist ".venv\Scripts\python.exe" (
-    echo.
     echo ERROR: Virtual Environment not found.
     echo Please run Install.bat first.
-    echo.
     pause
-    exit
+    exit /b
 )
 
-echo.
-echo ============================================
-echo      SLEEPING GIANTS SCANNER v1.0.0
-echo ============================================
-echo.
-
 call .venv\Scripts\activate.bat
+
+echo Starting scan...
+echo.
 
 python main.py
 
 echo.
-echo ============================================
-echo Scan Completed Successfully!
-echo Telegram report has been sent.
-echo CSV saved in output folder.
-echo ============================================
+echo ======================================================
+echo Scan completed successfully!
+echo.
+echo Check:
+echo   - Telegram for the report
+echo   - output\latest.csv
+echo   - output\history\
+echo ======================================================
 echo.
 
 pause

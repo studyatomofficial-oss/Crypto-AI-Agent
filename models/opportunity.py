@@ -15,6 +15,8 @@ class Opportunity:
     funding_score: float
     crowd_score: float
     base_score: float
+    false_break_score: float
+    recovery_failure_score: float
     psychology_score: float
     final_score: float
     score: float

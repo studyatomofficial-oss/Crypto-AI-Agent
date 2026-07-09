@@ -30,6 +30,8 @@ class Ranker:
                 funding_score=item.funding_score,
                 crowd_score=item.crowd_score,
                 base_score=item.base_score,
+                false_break_score=item.false_break_score,
+                recovery_failure_score=item.recovery_failure_score,
                 psychology_score=item.psychology_score,
                 final_score=item.final_score,
                 score=item.sleeping_score,

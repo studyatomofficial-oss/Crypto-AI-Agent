@@ -1,9 +1,9 @@
 class ConsoleReport:
     def show(self, results) -> None:
         print()
-        print("=" * 140)
+        print("=" * 180)
         print("SLEEPING GIANTS SCANNER")
-        print("=" * 140)
+        print("=" * 180)
         print()
         print(
             f"{'Rank':<6}"
@@ -13,11 +13,13 @@ class ConsoleReport:
             f"{'OI':<6}"
             f"{'Crowd':<8}"
             f"{'Base':<7}"
+            f"{'FalseBrk':<10}"
+            f"{'Recovery':<10}"
             f"{'Psych':<8}"
             f"{'Final':<8}"
             f"{'Reason':<65}"
         )
-        print("-" * 140)
+        print("-" * 180)
         for i, item in enumerate(results, start=1):
             print(
                 f"{i:<6}"
@@ -27,6 +29,8 @@ class ConsoleReport:
                 f"{item.oi_score:>4.1f}  "
                 f"{item.crowd_score:>6.1f}  "
                 f"{item.base_score:>5.1f}  "
+                f"{item.false_break_score:>8.1f}  "
+                f"{item.recovery_failure_score:>8.1f}  "
                 f"{item.psychology_score:>6.1f}  "
                 f"{item.final_score:>6.1f}  "
                 f"{item.reason:<65}"

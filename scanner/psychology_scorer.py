@@ -18,12 +18,16 @@ class PsychologyScorer:
         snapshot = self.score_open_interest(snapshot)
         snapshot = self.score_crowd(snapshot)
         snapshot = self.score_base(snapshot)
+        snapshot = self.score_false_break(snapshot)
+        snapshot = self.score_recovery_failure(snapshot)
 
         snapshot.psychology_score = (
             snapshot.funding_score
             + snapshot.oi_score
             + snapshot.crowd_score
             + snapshot.base_score
+            + snapshot.false_break_score
+            + snapshot.recovery_failure_score
         )
 
         return snapshot
@@ -71,6 +75,58 @@ class PsychologyScorer:
             snapshot.base_score = 2
         else:
             snapshot.base_score = 0
+
+        return snapshot
+
+    def score_false_break(self, snapshot):
+        snapshot.false_break_detected = False
+        snapshot.false_break_score = 0
+
+        candles = snapshot.candles
+        if len(candles) < 16:
+            return snapshot
+
+        lookback = candles[-15:]
+        prior = candles[:-15]
+        previous_30d_low = min(candle.low for candle in prior)
+
+        for index, candle in enumerate(lookback):
+            if candle.low >= previous_30d_low:
+                continue
+
+            snapshot.false_break_detected = True
+
+            reclaim_delay = None
+            for j in range(index, len(lookback)):
+                if lookback[j].close > previous_30d_low:
+                    reclaim_delay = j - index
+                    break
+
+            if reclaim_delay is None:
+                snapshot.false_break_score = 0
+            elif reclaim_delay <= 2:
+                snapshot.false_break_score = 10
+            elif reclaim_delay <= 5:
+                snapshot.false_break_score = 7
+            else:
+                snapshot.false_break_score = 3
+            break
+
+        return snapshot
+
+    def score_recovery_failure(self, snapshot):
+        recovery = snapshot.recovery_percent
+
+        if recovery <= 5:
+            snapshot.recovery_failure_score = 10
+        elif recovery <= 10:
+            snapshot.recovery_failure_score = 8
+        elif recovery <= 20:
+            snapshot.recovery_failure_score = 5
+        elif recovery <= 30:
+            snapshot.recovery_failure_score = 2
+        else:
+            snapshot.recovery_failure_score = 0
 
         return snapshot
 
