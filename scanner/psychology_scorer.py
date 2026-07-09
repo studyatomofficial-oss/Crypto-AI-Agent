@@ -16,10 +16,12 @@ class PsychologyScorer:
     def score(self, snapshot):
         snapshot = self.score_funding(snapshot)
         snapshot = self.score_open_interest(snapshot)
+        snapshot = self.score_crowd(snapshot)
 
         snapshot.psychology_score = (
             snapshot.funding_score
             + snapshot.oi_score
+            + snapshot.crowd_score
         )
 
         return snapshot
@@ -37,3 +39,20 @@ class PsychologyScorer:
             snapshot.oi_score = 0
 
         return snapshot
+
+    def score_crowd(self, snapshot):
+        dryup = snapshot.volume_dryup
+
+        if dryup >= 70:
+            snapshot.crowd_score = 10
+        elif dryup >= 50:
+            snapshot.crowd_score = 8
+        elif dryup >= 30:
+            snapshot.crowd_score = 5
+        elif dryup >= 10:
+            snapshot.crowd_score = 2
+        else:
+            snapshot.crowd_score = 0
+
+        return snapshot
+

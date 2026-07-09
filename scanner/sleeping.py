@@ -27,10 +27,27 @@ class SleepingAnalyzer:
             1 for candle in candles if candle.close <= threshold
         )
 
-        # Volume dry-up
+        # Volume dry-up as reduction percentage vs average daily volume.
         avg_volume = sum(c.volume for c in candles) / len(candles)
-        snapshot.volume_dryup_percent = (
-            (snapshot.volume_24h / avg_volume) * 100 if avg_volume > 0 else 0.0
+        if avg_volume > 0:
+            snapshot.volume_dryup_percent = max(
+                0.0,
+                (1 - (snapshot.volume_24h / avg_volume)) * 100,
+            )
+        else:
+            snapshot.volume_dryup_percent = 0.0
+        snapshot.volume_dryup = snapshot.volume_dryup_percent
+
+        # Stable base proxy: average daily range over the lookback period.
+        daily_ranges = [
+            ((candle.high - candle.low) / candle.close) * 100
+            for candle in candles
+            if candle.close > 0
+        ]
+        snapshot.avg_daily_range = (
+            sum(daily_ranges) / len(daily_ranges)
+            if daily_ranges
+            else 0.0
         )
 
     def calculate_accumulation_days(

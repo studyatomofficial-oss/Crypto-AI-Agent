@@ -13,6 +13,7 @@ class Opportunity:
     oi_change_30d: float
     oi_score: float
     funding_score: float
+    crowd_score: float
     psychology_score: float
     final_score: float
     score: float

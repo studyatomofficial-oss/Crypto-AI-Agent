@@ -28,6 +28,7 @@ class Ranker:
                 oi_change_30d=item.oi_change_30d,
                 oi_score=item.oi_score,
                 funding_score=item.funding_score,
+                crowd_score=item.crowd_score,
                 psychology_score=item.psychology_score,
                 final_score=item.final_score,
                 score=item.sleeping_score,

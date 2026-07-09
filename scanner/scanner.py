@@ -17,15 +17,19 @@ from utils.progress import ProgressBar
 from utils.logger import get_logger
 from notifications.telegram import TelegramNotifier
 from config import settings
+from database.database import Database
+from database.oi_history import OIHistoryRepository
 import strategy
 
 
 class Scanner:
     def __init__(self) -> None:
         self.market = UniverseBuilder().market
+        self.db = Database()
+        self.oi_history = OIHistoryRepository(self.db.conn)
         self.cache = MarketCache()
         self.universe_builder = UniverseBuilder()
-        self.collector = MarketCollector(self.market, self.cache)
+        self.collector = MarketCollector(self.market, self.cache, self.oi_history)
         self.analyzer = SnapshotAnalyzer()
         self.crash = CrashAnalyzer()
         self.recovery = RecoveryAnalyzer()
