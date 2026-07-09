@@ -63,5 +63,21 @@ class BybitClient:
             },
         )
 
+    def get_open_interest_history(
+        self,
+        symbol: str,
+        interval_time: str = "1d",
+        limit: int = 30,
+    ):
+        return self.client.get(
+            "/v5/market/open-interest",
+            {
+                "category": "linear",
+                "symbol": symbol,
+                "intervalTime": interval_time,
+                "limit": limit,
+            },
+        )
+
     def get_markets(self) -> list[dict]:
         return []

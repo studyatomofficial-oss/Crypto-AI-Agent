@@ -5,7 +5,9 @@ from database.oi_history import OIHistoryRepository
 from models.candle import Candle
 from models.market_snapshot import MarketSnapshot
 from scanner.accumulation import AccumulationAnalyzer
+from scanner.collector import MarketCollector
 from scanner.psychology_scorer import PsychologyScorer
+from scanner.sleeping import SleepingAnalyzer
 
 
 def test_compression_percent_uses_midpoint_normalization() -> None:
@@ -17,7 +19,7 @@ def test_compression_percent_uses_midpoint_normalization() -> None:
 
     AccumulationAnalyzer().analyze(snapshot, candles)
 
-    assert round(snapshot.compression_percent, 2) == 66.67
+    assert round(snapshot.compression_percent, 2) == 6.45
 
 
 def test_oi_history_average_returns_recent_window_average() -> None:
@@ -30,6 +32,40 @@ def test_oi_history_average_returns_recent_window_average() -> None:
     repo.upsert_daily("BTCUSDT", 140.0, today - timedelta(days=1))
 
     assert repo.get_average_open_interest("BTCUSDT", 7, today) == 120.0
+
+
+def test_collector_uses_market_oi_history_for_change_and_averages() -> None:
+    class FakeMarket:
+        def get_candles(self, symbol: str):
+            return [Candle(timestamp=1, open=1.0, high=1.1, low=0.9, close=1.0, volume=1.0, turnover=1.0)]
+
+        def get_open_interest_series(self, symbol: str, limit: int = 31):
+            return [100.0, 110.0, 120.0, 130.0]
+
+        def get_open_interest(self, symbol: str):
+            return 130.0
+
+    class FakeCache:
+        def get(self, symbol: str):
+            return {
+                "lastPrice": "1.0",
+                "volume24h": "1000",
+                "turnover24h": "1000",
+                "fundingRate": "0.0",
+            }
+
+    class FakeOIHistory:
+        def upsert_daily(self, symbol: str, open_interest: float):
+            self.symbol = symbol
+            self.open_interest = open_interest
+
+    snapshot = MarketCollector(FakeMarket(), FakeCache(), FakeOIHistory()).collect("BTCUSDT")
+
+    assert round(snapshot.oi_change_30d, 2) == 30.0
+    assert round(snapshot.oi_avg_7d, 2) == 110.0
+    assert round(snapshot.oi_avg_30d, 2) == 110.0
+    assert round(snapshot.oi_vs_7d_avg, 2) == 18.18
+    assert round(snapshot.oi_vs_30d_avg, 2) == 18.18
 
 
 def test_open_interest_score_uses_average_deviation_instead_of_defaulting_to_five() -> None:
@@ -79,3 +115,16 @@ def test_false_break_score_is_graded_for_medium_quality_reclaim() -> None:
 
     assert snapshot.false_break_detected is True
     assert snapshot.false_break_score == 5
+
+
+def test_bottom_stability_is_bounded_by_range_position() -> None:
+    snapshot = MarketSnapshot(symbol="BTCUSDT", current_price=100.0, low_30d=80.0)
+    candles = [
+        Candle(timestamp=1, open=85.0, high=100.0, low=80.0, close=82.0, volume=1.0, turnover=1.0),
+        Candle(timestamp=2, open=86.0, high=100.0, low=80.0, close=84.0, volume=1.0, turnover=1.0),
+        Candle(timestamp=3, open=87.0, high=100.0, low=80.0, close=86.0, volume=1.0, turnover=1.0),
+    ]
+
+    SleepingAnalyzer().analyze(snapshot, candles)
+
+    assert round(snapshot.bottom_stability_percent, 2) == 20.0

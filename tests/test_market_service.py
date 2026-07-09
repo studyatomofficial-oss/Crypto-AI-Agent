@@ -50,3 +50,24 @@ def test_get_candles_returns_empty_list_when_payload_is_missing_candles(monkeypa
         assert False, "Expected ValueError for missing candle data"
     except ValueError as e:
         assert "No candle data" in str(e)
+
+
+def test_get_open_interest_series_returns_sorted_daily_values(monkeypatch) -> None:
+    service = MarketService()
+
+    def fake_get_open_interest_history(symbol: str, interval_time: str = "1d", limit: int = 31) -> dict:
+        return {
+            "result": {
+                "list": [
+                    {"openInterest": "120", "timestamp": "3000"},
+                    {"openInterest": "100", "timestamp": "1000"},
+                    {"openInterest": "110", "timestamp": "2000"},
+                ]
+            }
+        }
+
+    monkeypatch.setattr(service.bybit, "get_open_interest_history", fake_get_open_interest_history)
+
+    series = service.get_open_interest_series("AGIUSDT")
+
+    assert series == [100.0, 110.0, 120.0]

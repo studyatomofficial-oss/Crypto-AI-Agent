@@ -8,18 +8,17 @@ class SleepingAnalyzer:
         if not candles:
             return
 
-        # Bottom stability - average distance from 30-day low
-        distances = []
-        for candle in candles:
-            distance = (
-                (candle.close - snapshot.low_30d)
-                / snapshot.low_30d
-            ) * 100
-            distances.append(distance)
-        snapshot.bottom_stability_percent = (
-            sum(distances)
-            / len(distances)
-        )
+        # Bottom stability - average close position within the 30-day range.
+        high_30d = max(candle.high for candle in candles)
+        range_width = high_30d - snapshot.low_30d
+        if range_width > 0:
+            positions = [
+                ((candle.close - snapshot.low_30d) / range_width) * 100
+                for candle in candles
+            ]
+            snapshot.bottom_stability_percent = sum(positions) / len(positions)
+        else:
+            snapshot.bottom_stability_percent = 0.0
 
         # Days near bottom
         threshold = snapshot.low_30d * 1.05

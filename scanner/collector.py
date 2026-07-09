@@ -21,6 +21,12 @@ class MarketCollector:
             return 0.0
         return ((current_value - average_value) / average_value) * 100.0
 
+    @staticmethod
+    def _average(values: list[float]) -> float | None:
+        if not values:
+            return None
+        return sum(values) / len(values)
+
     def collect(self, symbol: str) -> MarketSnapshot:
         ticker = self.cache.get(symbol)
         if ticker is None:
@@ -29,13 +35,17 @@ class MarketCollector:
         current_price = float(ticker["lastPrice"])
         candles = self.market.get_candles(symbol)
         low_30d = min((candle.low for candle in candles), default=0.0)
-        current_open_interest = self.market.get_open_interest(symbol)
-        oi_change_30d = self.oi_history.compute_30d_change(
-            symbol,
-            current_open_interest,
+        oi_series = self.market.get_open_interest_series(symbol, limit=31)
+        current_open_interest = oi_series[-1] if oi_series else self.market.get_open_interest(symbol)
+        prior_oi = oi_series[:-1] if len(oi_series) > 1 else []
+        baseline_oi = prior_oi[0] if prior_oi else None
+        oi_change_30d = (
+            self._percent_vs_average(current_open_interest, baseline_oi)
+            if baseline_oi is not None
+            else 0.0
         )
-        oi_avg_7d = self.oi_history.get_average_open_interest(symbol, days_back=7)
-        oi_avg_30d = self.oi_history.get_average_open_interest(symbol, days_back=30)
+        oi_avg_7d = self._average(prior_oi[-7:])
+        oi_avg_30d = self._average(prior_oi)
         self.oi_history.upsert_daily(symbol, current_open_interest)
         snapshot = MarketSnapshot(
             symbol=symbol,

@@ -47,6 +47,22 @@ class MarketService:
             return 0.0
         return float(data[0]["openInterest"])
 
+    def get_open_interest_series(self, symbol: str, limit: int = 31) -> list[float]:
+        response = self.bybit.get_open_interest_history(
+            symbol,
+            interval_time="1d",
+            limit=limit,
+        )
+        items = response.get("result", {}).get("list", [])
+        if not items:
+            return []
+
+        sorted_items = sorted(
+            items,
+            key=lambda item: int(item["timestamp"]),
+        )
+        return [float(item["openInterest"]) for item in sorted_items]
+
     def get_30_day_low(self, symbol: str) -> float:
         candles = self.get_candles(symbol)
         return min(candle.low for candle in candles)
